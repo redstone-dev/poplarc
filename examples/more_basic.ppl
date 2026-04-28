@@ -1,0 +1,33 @@
+// This is a line comment.
+/// This is a documentation comment.
+/* This is a block comment. */
+
+my_int := 5
+my_float32 := 6.7f
+my_float64 := 6.7d
+my_bool := true
+
+my_string := 'Hello, Poplar'
+my_char := 'E'
+
+fn my_function(argument: Int) = Int
+	argument + 5
+
+type Shape =
+	Rectangle(w: f32, h: f32)
+	Circle(r: f32)
+
+fn area(shape = Shape)
+| (shape: Rectangle) = f32
+	shape.w * shape.h
+| (shape: Circle) = f32
+	shape.r ^ 2 * 3.14159f
+
+fn main(args: List(String)) = ()
+	if len(args) < 3
+		write(stderr, 'Error: No parameters specified')
+		c_exit(0)
+	else
+		()
+	shape := Shape::Circle(32.0f)
+	println(area(shape))

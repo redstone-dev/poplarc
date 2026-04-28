@@ -1,0 +1,22 @@
+// This is a line comment.
+/// This is a documentation comment.
+/* This is a block comment. */
+
+type Foo (
+    Bar
+    Baz
+)
+
+fn exampleFunc(qux: Int) = Int
+    qux + 5
+
+fn foo(x: Foo)
+| (x: Foo::Bar) = io#()
+    !write(stdout, 'x is Bar');
+| (x: Foo::Baz) = io#()
+    !write(stdout, 'x is Baz');
+
+fn main() -> io#()
+    Opt::Some(x) := Opt::Some(5)
+
+    !write(stdout, "Hello world!");
