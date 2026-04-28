@@ -14,6 +14,7 @@ pub type CompilerMessage {
   CompilerNote(String, span: Span)
   CompilerWarning(String, span: Span)
   CompilerError(String, span: Span)
+  CompilerOk
 }
 
 pub fn colour(string, fg, bg) -> String {

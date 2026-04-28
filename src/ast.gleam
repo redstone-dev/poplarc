@@ -1,6 +1,8 @@
 import errors.{type CompilerMessage}
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/string_tree
 
 pub type NodeKind {
   Module
@@ -131,35 +133,162 @@ pub const test_ast = Node(
       tags: [Name("main"), ReturnType(PrimitiveNil), NoEffect, FnNoArgs],
     ),
   ],
-  tags: [],
+  tags: [Name("example.pop")],
 )
 
 /// Walks an AST. given a handler it executes it on every node
 /// Returns the first error
 pub fn walk(
   nodes: List(Node),
-  handler: fn(Node) -> Result(Nil, #(CompilerMessage, String)),
-) -> Result(Nil, #(CompilerMessage, String)) {
-  walk_tail(nodes, handler)
+  handler: fn(Node) -> #(CompilerMessage, String),
+) -> #(CompilerMessage, String) {
+  walk_loop(nodes, handler)
 }
 
 // Thanks to @littlelily on discord for helping out :3
-pub fn walk_tail(
+pub fn walk_loop(
   nodes: List(Node),
-  handler: fn(Node) -> Result(Nil, #(CompilerMessage, String)),
-) -> Result(Nil, #(CompilerMessage, String)) {
+  handler: fn(Node) -> #(CompilerMessage, String),
+) -> #(CompilerMessage, String) {
   case nodes {
     [head, ..nodes] -> {
       case handler(head) {
-        Ok(Nil) -> walk_tail(nodes, handler)
+        #(errors.CompilerOk, _) -> walk_loop(nodes, handler)
         e -> e
       }
     }
-    [] -> Ok(Nil)
+    [] -> #(errors.CompilerOk, "")
+  }
+}
+
+pub fn has_tag(node: Node, tag: Tag) -> Bool {
+  case node {
+    Node(_, _, tags) -> {
+      list.contains(tags, tag)
+    }
+    Leaf(_, tags) -> {
+      list.contains(tags, tag)
+    }
+  }
+}
+
+pub fn expect(f: Bool, error: errors.CompilerMessage) {
+  case f {
+    True -> error
+    False -> errors.CompilerOk
   }
 }
 
 /// Function to validate the AST
-pub fn validate(ast: Node) -> List(CompilerMessage) {
-  todo
+pub fn validate(ast: Node, filename: String) -> #(CompilerMessage, String) {
+  let assert Node(_, ast_children, _) = ast
+  let span_todo = errors.Span(0, 0)
+  walk(ast_children, fn(node) {
+    case node {
+      Node(kind, children, tags) -> {
+        case kind {
+          Module -> {
+            #(
+              expect(
+                has_tag(node, Name),
+                errors.CompilerError(
+                  "Expected `Module` to have a `Name` tag",
+                  span_todo,
+                ),
+              ),
+              filename,
+            )
+          }
+          FnDecl -> {
+            todo
+          }
+          VarDecl -> {
+            todo
+          }
+          EffectDecl -> {
+            todo
+          }
+          TypeDecl -> {
+            todo
+          }
+          Expression -> {
+            todo
+          }
+
+          Add -> {
+            todo
+          }
+          Subtract -> {
+            todo
+          }
+          Multiply -> {
+            todo
+          }
+          Divide -> {
+            todo
+          }
+          Modulo -> {
+            todo
+          }
+
+          Not -> {
+            todo
+          }
+          And -> {
+            todo
+          }
+          Or -> {
+            todo
+          }
+          Xor -> {
+            todo
+          }
+          Equal -> {
+            todo
+          }
+          GreaterThan -> {
+            todo
+          }
+          LessThan -> {
+            todo
+          }
+
+          FnCall -> {
+            todo
+          }
+          EffectCall -> {
+            todo
+          }
+          Constructor -> {
+            todo
+          }
+
+          Match -> {
+            todo
+          }
+          MatchCase -> {
+            todo
+          }
+          Pattern -> {
+            todo
+          }
+
+          TypeAnnotation -> {
+            todo
+          }
+
+          _ -> #(
+            errors.CompilerError(
+              "Invalid node type! Whatever it is must be a Leaf",
+              errors.Span(0, 0),
+            ),
+            filename,
+          )
+        }
+      }
+      Leaf(kind, tags) -> {
+        todo
+      }
+    }
+  })
 }
