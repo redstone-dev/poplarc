@@ -10,3 +10,6 @@ Poplar is an immutable functional systems programming language following a simil
 
 ## History
 The idea for Poplar and its compiler came about in early-mid 2026 following a train of shower thoughts along the lines of, "what if Erlang, but no BEAM". I finally decided to write the compiler in late April of that year.
+
+## Bug Reports
+__For compiler bugs only:__ Please submit an issue on GitHub describing the issue and the error message. Please be certain that it is a compiler bug, and not one with your program.
